@@ -1,0 +1,19 @@
+.po-parent{
+	margin: 30px 0;
+}
+.piy-price{
+	color: grey;
+}
+
+.po-parent {
+	min-width: 400px !important;
+    width: 100% !important;
+}
+
+.po-display-fields section {
+    margin: 10px 0 0 0;
+}
+
+.po-display-fields label {
+    font-weight: 600;
+}
