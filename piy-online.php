@@ -1,19 +1,19 @@
 <?php
 /*
- * Plugin Name:       PIY Online
+ * Plugin Name:       PIY Online Lite
  * Plugin URI:        https://piyribbons.com
- * Description:       Connect your store with the PIY Dashboard. Requires an active PIY Online subscription.
- * Version:           1.0.2
- * Author:            PIY RIBBONS
- * Developed By:      PIY RIBBONS
+ * Description:       PIY Online Lite is a WooCommerce plugin that allows you to add emojis and ribbons to your products.
+ * Version:           1.0.1
+ * Author:            Codi
+ * Developed By:      Codi
  * Author URI:        https://piyribbons.com
  * Support:           https://piyribbons.com
  * Domain Path:       /languages
- * Text Domain:       piy-online
- * 
+ * Text Domain:       piy-online-lite
+ *
  * WC requires at least: 5.0.0
  * WC tested up to: 7.*.*
- * 
+ *
  */
 
 
@@ -47,7 +47,7 @@ if (!in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get
 		deactivate_plugins(__FILE__);
 
 		$po_plugin_check = '<div id="message" class="error">
-            <p><strong>Could not activate PIY Online.</strong> The <a href="http://wordpress.org/extend/plugins/woocommerce/">WooCommerce plugin</a> must be active for this plugin to work. Please install &amp; activate WooCommerce »</p></div>';
+            <p><strong>Could not activate PIY Online Lite.</strong> The <a href="http://wordpress.org/extend/plugins/woocommerce/">WooCommerce plugin</a> must be active for this plugin to work. Please install &amp; activate WooCommerce »</p></div>';
 		echo wp_kses(__($po_plugin_check, 'piy-online'), $po_allowed_tags);
 
 	}
@@ -56,7 +56,7 @@ if (!in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get
 }
 
 if (!class_exists('PO_Main')) {
-	
+
 	class PO_Main {
 
 		public function __construct() {
@@ -65,10 +65,8 @@ if (!class_exists('PO_Main')) {
 			$this->po_global_constents_vars();
 			//load Text Domain
 			add_action('init', array( $this, 'po_load_text_domain' ));
-			
+
 			include_once PO_PLUGIN_DIR . 'includes/po-ajax.php';
-			include_once PO_PLUGIN_DIR . 'includes/po-request.php';
-			include_once PO_PLUGIN_DIR . 'includes/po-crons.php';
 
 			if (is_admin() ) {
 				//Include Admin Files
@@ -92,13 +90,13 @@ if (!class_exists('PO_Main')) {
 
 			if (!defined('PO_BASENAME') ) {
 				define('PO_BASENAME', plugin_basename(__FILE__));
-			}			
+			}
 		}
 
 		//load text domain
 		public function po_load_text_domain() {
 			if (function_exists('load_plugin_textdomain') ) {
-				load_plugin_textdomain('piy-online', false, dirname(plugin_basename(__FILE__)) . '/languages/');
+				load_plugin_textdomain('piy-online-lite', false, dirname(plugin_basename(__FILE__)) . '/languages/');
 			}
 		}
 	}

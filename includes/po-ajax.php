@@ -11,9 +11,9 @@ class PO_Ajax {
 
 		add_action( 'wp_ajax_pogetproducts', array($this, 'po_search_products'), 20 );
 
-		add_action('wp_ajax_get_fields', array($this, 'po_get_fields'), 20);		
+		add_action('wp_ajax_get_fields', array($this, 'po_get_fields'), 20);
 
-		add_action('wp_ajax_nopriv_get_fields', array($this, 'po_get_fields'), 20);		
+		add_action('wp_ajax_nopriv_get_fields', array($this, 'po_get_fields'), 20);
 	}
 
 
@@ -53,13 +53,11 @@ class PO_Ajax {
 	}
 
 	public function po_get_fields() {
-		
+
 		$nonce        = 0;
 		$product_id   = 0;
 		$term_id      = 0;
 		$enable_by    = '';
-		$default_temp = '';
-		$default_font = '';
 		$emoji_picker = '';
 
 
@@ -75,84 +73,42 @@ class PO_Ajax {
 			$enable_by 	= isset($_POST['enable_by']) ? sanitize_text_field( $_POST['enable_by'] ) : '';
 			$term_id 	= isset($_POST['term_id']) ? sanitize_text_field( $_POST['term_id'] ) : '';
 
-			$request    = new PO_Request();
-			$temp_fonts = $request->po_get_temp_fonts();
 
 			switch ($enable_by) {
 				case 'product':
-					$default_temp = get_post_meta($product_id, 'po_pro_template', true);
-					$default_font = get_post_meta($product_id, 'po_pro_font', true);
 					$emoji_picker = get_post_meta($product_id, 'po_pro_enable_emoji_picker', true);
 					$ribbon_price = get_post_meta($product_id, 'po_pro_price', true);
+                    $character_limit = get_post_meta($product_id, 'po_pro_character_limit', true);
 					break;
 
 				case 'category':
-					$default_temp = get_term_meta($term_id, 'po_cat_template', true);
-					$default_font = get_term_meta($term_id, 'po_cat_font', true);
 					$emoji_picker = get_term_meta($term_id, 'po_cat_emojis', true);
 					$ribbon_price = get_term_meta($term_id, 'po_cat_price', true);
-
+                    $character_limit = get_term_meta($term_id, 'po_cat_character_limit', true);
 					break;
 
 				case 'tag':
-					$default_temp = get_term_meta($term_id, 'po_tag_template', true);
-					$default_font = get_term_meta($term_id, 'po_tag_font', true);
 					$emoji_picker = get_term_meta($term_id, 'po_tag_emojis', true);
 					$ribbon_price = get_term_meta($term_id, 'po_tag_price', true);
+                    $character_limit = get_term_meta($term_id, 'po_tag_character_limit', true);
 					break;
 
-				
+
 				default:
-					$default_temp = get_option('po_gen_template');
-					$default_font = get_option('po_gen_font');
 					$emoji_picker = get_option('po_gen_emojis', true);
 					$ribbon_price = get_option('po_gen_price');
+                    $character_limit = get_option('po_gen_character_limit');
 					break;
 			}
 
 			ob_start();
-			
+
 			?>
 			<input type="hidden" name="po_price" value="<?php echo esc_attr($ribbon_price); ?>">
 			<?php
-			foreach ($temp_fonts['templates'] as $id => $template) {
-				if ($id == $default_temp) {
-					?>
-					<input type="hidden" name="po_template" value="<?php echo esc_attr($default_temp); ?>">
-					<?php
-				}
-			}
-
-			if (count($temp_fonts['fonts']) > 2 && !empty($default_font) ) {
-				?>
-				<section>
-					<label for="po_font"><?php esc_html_e('Fonts', 'piy-online'); ?></label>
-					<select name="po_font" id="po_font" class="po_font">
-						<?php
-						foreach ($temp_fonts['fonts'] as $id => $font) {
-							?>
-							<option value="<?php echo esc_attr($id); ?>" <?php echo selected($default_font, $id); ?> ><?php echo esc_html__($font, 'piy-online'); ?></option>
-							<?php
-						}
-						?>
-					</select>
-				</section>
-				<?php
-			}else{
-				foreach ($temp_fonts['fonts'] as $id => $font) {
-					if ($id == $default_font) {
-						?>
-						<input type="hidden" name="po_font" value="<?php echo esc_attr($default_font); ?>">
-						<?php
-					}
-				}
-			}
-
 			?>
 			<section>
-				<label for="po_text"><?php esc_html_e('Text on ribbon', 'piy-online'); ?></label>
-
-				<input type="text" name="po_text" id="po_text" class="emoji-field" data-emoji-picker="<?php echo esc_attr($emoji_picker); ?>" autocomplete="off">
+				<input type="text" name="po_text" id="po_text" class="emoji-field" data-emoji-picker="<?php echo esc_attr($emoji_picker); ?>" autocomplete="off" <?php if ($character_limit) : ?>maxlength="<?php echo esc_attr($character_limit); ?>"<?php endif; ?>>
 				<?php if ('yes' == $emoji_picker) : ?>
 					<div id="emoji-picker"></div>
 				<?php endif; ?>

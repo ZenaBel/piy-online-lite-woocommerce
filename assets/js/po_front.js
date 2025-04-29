@@ -7,15 +7,15 @@ jQuery(document).ready(function($){
 
 
 	$("#po_show_fields").on("click", function() {
-		
-		var product_id 	 = $(this).attr('data-product_id');
-		var request_sent = $(this).attr('data-sent');
-		var enable_by = $(this).attr('data-enable_by');
-		var term_id = $(this).attr('data-term');
-		var checkbox = $(this);
+
+		const product_id = $(this).attr('data-product_id');
+		const request_sent = $(this).attr('data-sent');
+		const enable_by = $(this).attr('data-enable_by');
+		const term_id = $(this).attr('data-term');
+		const checkbox = $(this);
 
 
-		if('false' == request_sent && $(checkbox).is(':checked') ){
+		if('false' === request_sent && $(checkbox).is(':checked') ){
 			$(document.body).css({'cursor' : 'wait'});
 			$('.po-display-fields').empty();
 			$.ajax({
@@ -38,9 +38,9 @@ jQuery(document).ready(function($){
 					let emoji_picker = $('#emoji-picker');
 
 
-					emoji_enable = $(inputField).attr('data-emoji-picker');
+					let emoji_enable = $(inputField).attr('data-emoji-picker');
 
-					if ('yes' == emoji_enable) {
+					if ('yes' === emoji_enable) {
 
 						// const pickerOptions = { onEmojiSelect: function(emoji) {
                     	// 	let val  = $(input_field).val();
@@ -63,7 +63,7 @@ jQuery(document).ready(function($){
 								// Move the cursor position after the inserted emoji
 								const newCursorPos = cursorPos + emoji.native.length;
 								inputField[0].setSelectionRange(newCursorPos, newCursorPos);
-								
+
 							}
 						};
 
@@ -87,7 +87,7 @@ jQuery(document).ready(function($){
 					$('.po-display-fields').append(response['error']);
 				}
 			});
-		}else if('true' == request_sent) {
+		}else if('true' === request_sent) {
 			if ($(checkbox).is(':checked')) {
 				$('.po-display-fields').show();
 			}else{
