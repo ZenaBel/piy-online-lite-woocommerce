@@ -72,6 +72,7 @@ class PO_Ajax {
 			$product_id = sanitize_text_field( $_POST['product_id'] );
 			$enable_by 	= isset($_POST['enable_by']) ? sanitize_text_field( $_POST['enable_by'] ) : '';
 			$term_id 	= isset($_POST['term_id']) ? sanitize_text_field( $_POST['term_id'] ) : '';
+            $button_enable = isset($_POST['button_enable']) ? sanitize_text_field( $_POST['button_enable'] ) : 'no';
 
 
 			switch ($enable_by) {
@@ -79,18 +80,27 @@ class PO_Ajax {
 					$emoji_picker = get_post_meta($product_id, 'po_pro_enable_emoji_picker', true);
 					$ribbon_price = get_post_meta($product_id, 'po_pro_price', true);
                     $character_limit = get_post_meta($product_id, 'po_pro_character_limit', true);
+                    $button_text = get_post_meta($product_id, 'po_pro_button_text', true);
+                    $button_color = get_post_meta($product_id, 'po_pro_button_color', true);
+                    $button_text_color = get_post_meta($product_id, 'po_pro_button_text_color', true);
 					break;
 
 				case 'category':
 					$emoji_picker = get_term_meta($term_id, 'po_cat_emojis', true);
 					$ribbon_price = get_term_meta($term_id, 'po_cat_price', true);
                     $character_limit = get_term_meta($term_id, 'po_cat_character_limit', true);
+                    $button_text = get_term_meta($term_id, 'po_cat_button_text', true);
+                    $button_color = get_term_meta($term_id, 'po_cat_button_color', true);
+                    $button_text_color = get_term_meta($term_id, 'po_cat_button_text_color', true);
 					break;
 
 				case 'tag':
 					$emoji_picker = get_term_meta($term_id, 'po_tag_emojis', true);
 					$ribbon_price = get_term_meta($term_id, 'po_tag_price', true);
                     $character_limit = get_term_meta($term_id, 'po_tag_character_limit', true);
+                    $button_text = get_term_meta($term_id, 'po_tag_button_text', true);
+                    $button_color = get_term_meta($term_id, 'po_tag_button_color', true);
+                    $button_text_color = get_term_meta($term_id, 'po_tag_button_text_color', true);
 					break;
 
 
@@ -98,6 +108,9 @@ class PO_Ajax {
 					$emoji_picker = get_option('po_gen_emojis', true);
 					$ribbon_price = get_option('po_gen_price');
                     $character_limit = get_option('po_gen_character_limit');
+                    $button_text = get_option('po_gen_button_text');
+                    $button_color = get_option('po_gen_button_color');
+                    $button_text_color = get_option('po_gen_button_text_color');
 					break;
 			}
 
@@ -116,7 +129,25 @@ class PO_Ajax {
 			<?php
 
 			$html = ob_get_clean();
-			wp_send_json_success($html);
+
+            if ($ribbon_price > 0) {
+                $price_html = wc_price($ribbon_price);
+                $text = str_replace('{price}', html_entity_decode(strip_tags($price_html)), $button_text);
+            } else {
+                $text = str_replace('{price}', '', $button_text);
+            }
+
+            $data = array(
+                'fields' => $html,
+                'button' => [
+                    'text' => $text,
+                    'color' => $button_color,
+                    'text_color' => $button_text_color,
+                    'button_enable' => $button_enable,
+                ]
+            );
+
+			wp_send_json_success($data);
 			die();
 		}
 	}

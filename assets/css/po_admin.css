@@ -1,0 +1,126 @@
+@import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap');
+
+.po_gen_products {
+    width: 50%;
+}
+.fields-lenght {
+    width: 50%;
+}
+.po_gen_categories, .po_gen_tags, .po_gen_attributes {
+    width: 50%;
+}
+
+.data-fields-margin-left {
+    margin-left: 12px;
+}
+
+.piyonline h2:first-of-type {
+    font-size: 27px;
+    margin: 49px 10px 0 10px;
+}
+
+.piyonline .form-table th, .piyonline .form-wrap label {
+    min-width: 350px;
+}
+
+
+.piyonline #bulk-titles .ntdelbutton:before, .piyonline .notice-dismiss:before, .piyonline .tagchecklist .ntdelbutton .remove-tag-icon:before, .piyonline .welcome-panel .welcome-panel-close:before {
+    color: #fff !important;
+}
+
+.piyonline #setting-error-settings_updated {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    background: #dd3f3e !important;
+    color: #fff;
+    font-weight: normal !important;
+}
+
+.piyonline .notice.is-dismissible {
+    background: #fff !important;
+    border-radius: 50px;
+    margin-top: 85px;
+    border: none;
+}
+
+.piyonline .info-box {
+    font-family: 'Figtree', Helvetica, Arial, sans-serif;
+    padding: 20px;
+    font-size: 16px;
+    background: #fff;
+    border-radius: 10px;
+    margin: 20px 0 50px 0;
+    width: fit-content;
+    float: right;
+}
+
+.piyonline {
+    font-family: 'Figtree', Helvetica, Arial, sans-serif;
+    font-size: 16px;
+}
+
+.piyonline input#po_save_configs {
+    font-size: 15px;
+    border-radius: 50px;
+    background: #dd3f3e;
+    border: none;
+    padding: 6px 22px;
+}
+
+.piyonline form#save_options_form {
+    padding: 13px 30px;
+    background: #fff;
+    margin: 0px 0px;
+    border-radius: 10px;
+}
+
+.piyonline form h2 {
+    font-size: 24px !important;
+    margin-top: 30px !important;
+    margin-left: 0px !important
+}
+
+.piyonline h2.nav-tab-wrapper {
+    border: none !important;
+    margin: 25px 0 10px 0;
+}
+
+.piyonline input, .piyonline select {
+    padding: 6px 17px;
+    font-size: 16px;
+    border-radius: 50px;
+    border: none;
+    background: #f2f2f2;
+}
+
+.piyonline .info-box a {
+    color: #dd3f3e;
+    text-decoration: none;;
+}
+
+.piyonline form p {
+    font-size: 15px;
+}
+
+.piyonline th {
+    font-size: 16px;
+}
+
+.piyonline a.nav-tab {
+    border-radius: 50px;
+    border: none;
+    background: #d8d8d8;
+    color: #090909;
+    padding: 10px 27px;
+    font-weight: normal;
+}
+
+.piyonline .nav-tab-active, .piyonline nav-tab-active:hover {
+    border-radius: 50px;
+    border: none;
+    background: #000 !important;
+    color: #fff !important;
+    padding: 10px 27px;
+    font-weight: normal;
+}

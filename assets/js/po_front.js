@@ -12,6 +12,7 @@ jQuery(document).ready(function($){
 		const request_sent = $(this).attr('data-sent');
 		const enable_by = $(this).attr('data-enable_by');
 		const term_id = $(this).attr('data-term');
+		const button_enable = $(this).attr('data-button_enable');
 		const checkbox = $(this);
 
 
@@ -26,12 +27,13 @@ jQuery(document).ready(function($){
 					nonce    : nonce,
 					product_id : product_id,
 					term_id : term_id,
-					enable_by : enable_by
+					enable_by : enable_by,
+					button_enable : button_enable
 				},
 				success: function (response) {
 					$(document.body).css({'cursor' : 'default'});
 					$(checkbox).attr('data-sent', 'true');
-					$('.po-display-fields').append(response['data']);
+					$('.po-display-fields').append(response['data']['fields']);
 
 					// Get the input field
 					let inputField = $('#po_text');
@@ -80,6 +82,13 @@ jQuery(document).ready(function($){
 								$(emoji_picker).hide();
 							}
 						});
+					}
+
+					if (response['data']['button']['button_enable'] === 'yes') {
+						const button = $('.single_add_to_cart_button');
+						button.css('color', response['data']['button']['color']);
+						button.css('background-color', response['data']['button']['text_color']);
+						button.text(response['data']['button']['text']);
 					}
 				},
 				error: function (response) {

@@ -147,7 +147,13 @@ if (!class_exists('PO_Front')) {
             $term_id = $applied_data['term_id'];
             $enable_by = $applied_data['enable_by'];
             $price = $applied_data['price'];
-            $text = $applied_data['section_title'] ?: esc_html__('Add a personalised satin ribbon for {price}', 'piy-online-lite');
+            if (!empty($applied_data['section_title'])) {
+                $text = $applied_data['section_title'];
+            } elseif (!empty(get_option('po_gen_text'))) {
+                $text = get_option('po_gen_text');
+            } else {
+                $text = esc_html__('Add a personalised satin ribbon for {price}', 'piy-online-lite');
+            }
             $character_limit = $applied_data['character_limit'];
 
             if ($price > 0) {
@@ -167,7 +173,8 @@ if (!class_exists('PO_Front')) {
                        } ?>
                        data-product_id="<?php echo get_the_ID(); ?>" data-sent="false"
                        data-enable_by="<?php echo esc_attr($enable_by); ?>"
-                       data-term='<?php echo esc_attr($term_id); ?>'> <?php echo wp_kses_post($text);?>
+                       data-term='<?php echo esc_attr($term_id); ?>'
+                       data-button_enable="<?php echo esc_attr(get_option('po_gen_button_enable')); ?>"> <?php echo wp_kses_post($text);?>
                 <div class="po-display-fields">
 
                 </div>
@@ -179,7 +186,6 @@ if (!class_exists('PO_Front')) {
 
         public function po_is_in_gen_configs($product_id)
         {
-
             $products = !empty(get_option('po_gen_products')) ? get_option('po_gen_products') : array();
             $categories = get_option('po_gen_categories');
             $tags = get_option('po_gen_tags');
@@ -474,6 +480,10 @@ if (!class_exists('PO_Front')) {
         public function custom_add_to_cart_text_with_price($default_text) {
             global $post;
             if (!is_a($post, 'WC_Product')) {
+                return $default_text;
+            }
+            $enable = get_option('po_gen_button_enable');
+            if ($enable != 'yes') {
                 return $default_text;
             }
             $applied_data = $this->po_get_applied_from($post->ID);

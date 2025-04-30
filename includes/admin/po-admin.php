@@ -61,6 +61,17 @@ if (!class_exists('PO_Admin')) {
             add_action('edited_product_tag', array($this, 'po_save_category_fields'), 20, 1);
 
             add_action('create_product_tag', array($this, 'po_save_category_fields'), 20, 1);
+
+            /**
+             *
+             * PIY Online for GENERAL
+             *
+             */
+
+            // Add PIY Online for Woo Submenu
+            add_action('admin_menu', array($this,'po_add_submenu'), 20 );
+
+            add_action('admin_init', array($this, 'po_submenu_tabs'), 20 );
         }
 
         public function po_tab_icon()
@@ -147,14 +158,12 @@ if (!class_exists('PO_Admin')) {
                     );
 
 
-                    $current_value_section_title = get_post_meta( $post->ID, 'po_pro_section_title', true ) ?: esc_html__('Add a personalised satin ribbon for {price}', 'piy-online-lite');
-
                     woocommerce_wp_text_input(
                         array(
                             'id' => 'po_pro_section_title',
                             'label' => esc_html__('Section title', 'piy-online-lite'),
                             'description' => esc_html__('This text will be displayed above the ribbon text field. {price} variable will be replaced with the price.', 'piy-online-lite'),
-                            'value' => $current_value_section_title,
+                            'default' => '',
                             'desc_tip' => true,
                             'class' => 'short',
                         )
@@ -183,14 +192,12 @@ if (!class_exists('PO_Admin')) {
                         )
                     );
 
-                    $button_text = get_post_meta($post->ID, 'po_pro_button_text', true) ?: esc_html__('Add to cart ({price})', 'piy-online-lite');
-
                     woocommerce_wp_text_input(
                         array(
                             'id' => 'po_pro_button_text',
                             'label' => esc_html__('Button text', 'piy-online-lite'),
                             'description' => esc_html__('This text will be displayed on the button. {price} variable will be replaced with the price.', 'piy-online-lite'),
-                            'value' => $button_text,
+                            'default' => '',
                             'desc_tip' => true,
                             'class' => 'short',
                         )
@@ -201,38 +208,52 @@ if (!class_exists('PO_Admin')) {
             <?php
         }
 
-        public function po_save_data_tabs($post_id)
-        {
+        public function po_save_data_tabs($post_id) {
+            error_log('PO: Attempting to save data for post_id: ' . $post_id);
 
-            if (isset($_POST['po_pro_nonce'])) {
-                if (!wp_verify_nonce(sanitize_text_field($_POST['po_pro_nonce']), 'po-pro-nonce')) {
-                    die('PIY-Online Product Nonce Verification Failed');
+            if (!isset($_POST['po_pro_nonce'])) {
+                error_log('PO: Nonce not set in POST data');
+                return;
+            }
+
+            if (!wp_verify_nonce(sanitize_text_field($_POST['po_pro_nonce']), 'po-pro-nonce')) {
+                error_log('PO: Nonce verification failed');
+                die('PIY-Online Product Nonce Verification Failed');
+            }
+
+            error_log('PO: Nonce verified, processing fields...');
+
+            $fields = [
+                'po_pro_enable' => 'checkbox',
+                'po_pro_enable_emoji_picker' => 'checkbox',
+                'po_pro_price' => 'price',
+                'po_pro_section_title' => 'text',
+                'po_pro_character_limit' => 'text',
+                'po_pro_button_text' => 'text'
+            ];
+
+            foreach ($fields as $field => $type) {
+                $value = '';
+
+                if ($type === 'checkbox') {
+                    $value = isset($_POST[$field]) ? 'yes' : 'no';
+                } else {
+                    $value = isset($_POST[$field]) ? sanitize_text_field($_POST[$field]) : '';
+
+                    if ($field === 'po_pro_price') {
+                        $value = str_replace(',', '.', $value);
+                        if (!is_numeric($value)) {
+                            $value = '';
+                        }
+                    }
                 }
+
+                update_post_meta($post_id, $field, $value);
+                error_log("PO: Updated $field with value: " . $value);
             }
 
-            $po_pro_enable = isset($_POST['po_pro_enable']) ? 'yes' : 'no';
-            update_post_meta($post_id, 'po_pro_enable', $po_pro_enable);
-
-            $po_pro_enable_emoji_picker = isset($_POST['po_pro_enable_emoji_picker']) ? 'yes' : 'no';
-            update_post_meta($post_id, 'po_pro_enable_emoji_picker', $po_pro_enable_emoji_picker);
-
-            $po_pro_price_raw = isset($_POST['po_pro_price']) ? sanitize_text_field($_POST['po_pro_price']) : '';
-            $po_pro_price = str_replace(',', '.', $po_pro_price_raw);
-            if (!is_numeric($po_pro_price)) {
-                $po_pro_price = '';
-            }
-            update_post_meta($post_id, 'po_pro_price', $po_pro_price);
-
-            $po_pro_section_title = isset($_POST['po_pro_section_title']) ? sanitize_text_field($_POST['po_pro_section_title']) : '';
-            update_post_meta($post_id, 'po_pro_section_title', $po_pro_section_title);
-
-            $po_pro_character_limit = isset($_POST['po_pro_character_limit']) ? sanitize_text_field($_POST['po_pro_character_limit']) : '';
-            update_post_meta($post_id, 'po_pro_character_limit', $po_pro_character_limit);
-
-            $po_pro_button_text = isset($_POST['po_pro_button_text']) ? sanitize_text_field($_POST['po_pro_button_text']) : '';
-            update_post_meta($post_id, 'po_pro_button_text', $po_pro_button_text);
+            error_log('PO: Data saved successfully for post_id: ' . $post_id);
         }
-
 
         /**
          *
@@ -262,7 +283,7 @@ if (!class_exists('PO_Admin')) {
 
             <div class="form-field term-po-section-title-wrap">
                 <label for="po_cat_section_title"><?php esc_html_e('Section title', 'piy-online-lite'); ?></label>
-                <input type="text" name="po_cat_section_title" id="po_cat_section_title" value="<?php echo esc_html__('Add a personalised satin ribbon for {price}', 'piy-online-lite'); ?>">
+                <input type="text" name="po_cat_section_title" id="po_cat_section_title">
                 <p class="po-section-title-description"><?php esc_html_e('This text will be displayed above the ribbon text field. {price} variable will be replaced with the price.', 'piy-online-lite'); ?></p>
             </div>
 
@@ -280,7 +301,7 @@ if (!class_exists('PO_Admin')) {
 
             <div class="form-field term-po-button-text-wrap">
                 <label for="po_cat_button_text"><?php esc_html_e('Button text', 'piy-online-lite'); ?></label>
-                <input type="text" name="po_cat_button_text" id="po_cat_button_text" value="<?php echo esc_html__('Add to cart ({price})', 'piy-online-lite'); ?>">
+                <input type="text" name="po_cat_button_text" id="po_cat_button_text">
                 <p class="po-button-text-description"><?php esc_html_e('This text will be displayed on the button. {price} variable will be replaced with the price.', 'piy-online-lite'); ?></p>
             </div>
 
@@ -408,6 +429,415 @@ if (!class_exists('PO_Admin')) {
             update_term_meta($term_id, 'po_cat_character_limit', $po_cat_character_limit);
             update_term_meta($term_id, 'po_cat_button_text', $po_cat_button_text);
 
+        }
+
+        /**
+         *
+         * GENERAL PIY ONLINE
+         *
+         */
+
+
+        // ADD PIY Online SUBMENU
+        public function po_add_submenu() {
+
+            add_submenu_page(
+                'woocommerce', // parent name
+                esc_html__( 'PIY Online Lite', 'piy-online-lite' ), // Page Title
+                esc_html__( 'PIY Online Lite', 'piy-online-lite' ), // Menu Title
+                'manage_options', // capabilities
+                'piy-online-lite-settings', // page slug
+                array($this,'po_submenu_content') // callback
+            );
+        }
+
+        public function po_submenu_content() {
+
+            global $active_tab;
+            if ( isset( $_GET[ 'tab' ] )) {
+                $active_tab = sanitize_text_field( $_GET[ 'tab' ] );
+            } else {
+                $active_tab = 'api_configs';
+            }
+
+            ?>
+            <div class="wrap piyonline">
+
+                <h2> <?php echo esc_html__( 'PIY Online Lite', 'piy-online-lite' ); ?></h2>
+                <?php settings_errors(); ?>
+                <h2 class="nav-tab-wrapper">
+                    <a href="?page=piy-online-lite-settings&tab=po_gen_config" class="nav-tab nav-tab-active" > <?php esc_html_e( 'Configure PIY Online Lite', 'piy-online-lite' ); ?> </a>
+                </h2>
+
+                <form method="post" action="options.php" id="save_options_form">
+                    <?php
+                    settings_fields( 'gen_config' );
+                    do_settings_sections( 'gen_config_page' );
+
+                    submit_button(esc_html__('Save configuration', 'piy-online-lite'), 'primary', 'po_save_configs');
+                    ?>
+
+                </form>
+            </div>
+            <?php
+
+        }
+
+        /**
+         *
+         * General Configuration Tabs
+         *
+         */
+
+        public function po_submenu_tabs() {
+
+           /**
+             *
+             * General Configuration
+             *
+             */
+
+            add_settings_section(
+                'gen_config_sec', // ID used to identify this section and with which to register options
+                '',  // Title to be displayed on the administration page
+                array($this, 'gen_config_sec_cb'), // Callback used to render the description of the section
+                'gen_config_page'      // Page on which to add this section of options
+            );
+
+            add_settings_field (
+                'po_gen_emojis', // ID used to identify the field throughout the theme
+                esc_html__('Enable emoji picker', 'piy-online-lite'), // The label to the left of the option interface element
+                array($this, 'po_geb_emojis_cb'),   // The name of the function responsible for rendering the option interface
+                'gen_config_page', // The page on which this option will be displayed
+                'gen_config_sec', // The name of the section to which this field belongs
+                array(
+                    esc_html__('Allow customers to select emojis in the ribbon text field.', 'piy-online-lite'),
+                )
+            );
+            register_setting(
+                'gen_config',
+                'po_gen_emojis'
+            );
+
+            add_settings_field (
+                'po_gen_button_enable', // ID used to identify the field throughout the theme
+                esc_html__('Enable button', 'piy-online-lite'), // The label to the left of the option interface element
+                array($this, 'po_gen_button_enable_cb'),   // The name of the function responsible for rendering the option interface
+                'gen_config_page', // The page on which this option will be displayed
+                'gen_config_sec', // The name of the section to which this field belongs
+                array(
+                    esc_html__('Enable/Disable the button on the ribbon.', 'piy-online-lite'),
+                )
+            );
+            register_setting(
+                'gen_config',
+                'po_gen_button_enable'
+            );
+
+            add_settings_field (
+                'po_gen_products', // ID used to identify the field throughout the theme
+                esc_html__('Activate PIY Online Lite for specific products', 'piy-online-lite'), // The label to the left of the option interface element
+                array($this, 'po_gen_products_cb'), // The name of the function responsible for rendering the option interface
+                'gen_config_page', // The page on which this option will be displayed
+                'gen_config_sec' // The name of the section to which this field belongs
+            );
+            register_setting(
+                'gen_config',
+                'po_gen_products'
+            );
+
+            add_settings_field (
+                'po_gen_categories', // ID used to identify the field throughout the theme
+                esc_html__('Activate PIY Online Lite for specific categories', 'piy-online-lite'), // The label to the left of the option interface element
+                array($this, 'po_gen_categories_callback'),   // The name of the function responsible for rendering the option interface
+                'gen_config_page', // The page on which this option will be displayed
+                'gen_config_sec' // The name of the section to which this field belongs
+            );
+            register_setting(
+                'gen_config',
+                'po_gen_categories'
+            );
+
+            add_settings_field (
+                'po_gen_tags', // ID used to identify the field throughout the theme
+                esc_html__('Activate PIY Online Lite for specific tags', 'piy-online-lite'), // The label to the left of the option interface element
+                array($this, 'po_gen_tags_callback'),   // The name of the function responsible for rendering the option interface
+                'gen_config_page', // The page on which this option will be displayed
+                'gen_config_sec' // The name of the section to which this field belongs
+            );
+            register_setting(
+                'gen_config',
+                'po_gen_tags'
+            );
+
+            add_settings_field (
+                'po_gen_attributes', // ID used to identify the field throughout the theme
+                esc_html__('Activate PIY Online Lite for specific attributes', 'piy-online-lite'), // The label to the left of the option interface element
+                array($this, 'po_gen_attributes_callback'),   // The name of the function responsible for rendering the option interface
+                'gen_config_page', // The page on which this option will be displayed
+                'gen_config_sec' // The name of the section to which this field belongs
+            );
+            register_setting(
+                'gen_config',
+                'po_gen_attributes'
+            );
+
+            add_settings_field (
+                'po_gen_price', // ID used to identify the field throughout the theme
+                esc_html__('Ribbon price', 'piy-online-lite'), // The label to the left of the option interface element
+                array($this, 'po_gen_price_callback'),   // The name of the function responsible for rendering the option interface
+                'gen_config_page', // The page on which this option will be displayed
+                'gen_config_sec' // The name of the section to which this field belongs
+            );
+            register_setting(
+                'gen_config',
+                'po_gen_price'
+            );
+
+            add_settings_field (
+                'po_gen_text', // ID used to identify the field throughout the theme
+                esc_html__('Custom label', 'piy-online-lite'), // The label to the left of the option interface element
+                array($this, 'po_gen_text_callback'),   // The name of the function responsible for rendering the option interface
+                'gen_config_page', // The page on which this option will be displayed
+                'gen_config_sec' // The name of the section to which this field belongs
+            );
+            register_setting(
+                'gen_config',
+                'po_gen_text'
+            );
+
+            add_settings_field (
+                'po_gen_character_limit', // ID used to identify the field throughout the theme
+                esc_html__('Ribbon text character limit', 'piy-online-lite'), // The label to the left of the option interface element
+                array($this, 'po_gen_character_limit_callback'),   // The name of the function responsible for rendering the option interface
+                'gen_config_page', // The page on which this option will be displayed
+                'gen_config_sec' // The name of the section to which this field belongs
+            );
+            register_setting(
+                'gen_config',
+                'po_gen_character_limit'
+            );
+
+            add_settings_field (
+                'po_gen_button_text', // ID used to identify the field throughout the theme
+                esc_html__('Button text', 'piy-online-lite'), // The label to the left of the option interface element
+                array($this, 'po_gen_button_text_callback'),   // The name of the function responsible for rendering the option interface
+                'gen_config_page', // The page on which this option will be displayed
+                'gen_config_sec' // The name of the section to which this field belongs
+            );
+            register_setting(
+                'gen_config',
+                'po_gen_button_text'
+            );
+
+            add_settings_field (
+                'po_gen_button_text_color', // ID used to identify the field throughout the theme
+                esc_html__('Button text color', 'piy-online-lite'), // The label to the left of the option interface element
+                array($this, 'po_gen_button_text_color_callback'),   // The name of the function responsible for rendering the option interface
+                'gen_config_page', // The page on which this option will be displayed
+                'gen_config_sec' // The name of the section to which this field belongs
+            );
+            register_setting(
+                'gen_config',
+                'po_gen_button_text_color'
+            );
+
+            add_settings_field (
+                'po_gen_button_color', // ID used to identify the field throughout the theme
+                esc_html__('Button background color', 'piy-online-lite'), // The label to the left of the option interface element
+                array($this, 'po_gen_button_color_callback'),   // The name of the function responsible for rendering the option interface
+                'gen_config_page', // The page on which this option will be displayed
+                'gen_config_sec' // The name of the section to which this field belongs
+            );
+            register_setting(
+                'gen_config',
+                'po_gen_button_color'
+            );
+        }
+
+
+        /**
+         *
+         * General Configuration
+         *
+         */
+
+
+        public function gen_config_sec_cb() {
+            ?>
+            <h2><?php echo esc_html__('Configure PIY Online Lite', 'piy-online-lite'); ?></h2>
+            <p><?php echo esc_html__('The settings below can be overridden on product level, category level and tag level.', 'piy-online-lite'); ?> </p>
+            <?php
+        }
+
+        public function po_geb_emojis_cb( $args) {
+            ?>
+            <input type="checkbox" name="po_gen_emojis" id="po_gen_emojis" class="fields-lenght" value="yes" <?php echo checked('yes', get_option('po_gen_emojis') ); ?>
+            />
+            <p class="description po_gen_emojis"> <?php echo esc_attr( current($args) ); ?> </p>
+            <?php
+        }
+
+        public function po_gen_button_enable_cb( $args) {
+            ?>
+            <input type="checkbox" name="po_gen_button_enable" id="po_gen_button_enable" class="fields-lenght" value="yes" <?php echo checked('yes', get_option('po_gen_button_enable') ); ?>
+            />
+            <p class="description po_gen_button_enable"> <?php echo esc_attr( current($args) ); ?> </p>
+            <?php
+        }
+
+        public function po_gen_products_cb() {
+            ?>
+            <select multiple="multiple" class="po_gen_products" name="po_gen_products[]" id="po_gen_products" data-placeholder='<?php esc_html_e('Select products...', 'piy-online-lite' ); ?>' tabindex="-1">
+                <?php
+
+                if (!empty(get_option('po_gen_products'))) {
+                    $spec_pro = get_option('po_gen_products');
+                } else {
+                    $spec_pro = array();
+                }
+
+                foreach ($spec_pro as $pro_id) {
+                    $product = wc_get_product($pro_id);
+                    ?>
+                    <option value="<?php echo esc_attr( $pro_id ); ?>" <?php echo selected(true, true, false); ?>> <?php echo esc_html( wp_strip_all_tags( $product->get_formatted_name() ) ); ?> </option>
+                    <?php
+                }
+                ?>
+            </select>
+            <p class="description"><?php esc_html_e('Apply the default template and font to the selected products.', 'piy-online-lite'); ?></p>
+            <?php
+        }
+
+        public function po_gen_categories_callback() {
+
+            $terms    = get_terms( array('taxonomy' => 'product_cat', 'hide_empty' => false) );
+            $spec_cat = array();
+
+            if (!empty(get_option('po_gen_categories'))) {
+                $spec_cat = (array) get_option('po_gen_categories');
+            }
+            ?>
+            <select multiple="multiple" class="po_gen_categories" name="po_gen_categories[]" id="po_gen_categories" data-placeholder='<?php esc_html_e('Select categories...', 'piy-online-lite' ); ?>' tabindex="-1">
+                <?php
+
+                foreach ($terms as $term) {
+
+                    ?>
+                    <option value="<?php echo esc_attr( $term->term_id ); ?>"
+                        <?php echo in_array($term->term_id, $spec_cat) ? 'selected' : ''; ?> ><?php echo esc_html__( $term->name, 'piy-online-lite' ); ?>
+                    </option>
+                    <?php
+                }
+                ?>
+
+            </select>
+            <p class="description"><?php esc_html_e('Apply the default template and font to the selected product categories.', 'piy-online-lite'); ?></p>
+            <?php
+        }
+
+        public function po_gen_tags_callback() {
+
+            $tags     = get_terms( array('taxonomy' => 'product_tag', 'hide_empty' => false) );
+            $spec_cat = array();
+
+            if (!empty(get_option('po_gen_tags'))) {
+                $spec_cat = (array) get_option('po_gen_tags');
+            }
+            ?>
+            <select multiple="multiple" class="po_gen_tags" name="po_gen_tags[]" id="po_gen_tags" data-placeholder='<?php esc_html_e('Select tags...', 'piy-online-lite' ); ?>' tabindex="-1">
+                <?php
+
+                foreach ($tags as $tag) {
+
+                    ?>
+                    <option value="<?php echo esc_attr( $tag->term_id ); ?>"
+                        <?php echo in_array($tag->term_id, $spec_cat) ? 'selected' : ''; ?> ><?php echo esc_html__( $tag->name, 'piy-online-lite' ); ?>
+                    </option>
+                    <?php
+                }
+                ?>
+
+            </select>
+            <p class="description"><?php esc_html_e('Apply the default template and font to the selected product tags.', 'piy-online-lite'); ?></p>
+            <?php
+        }
+
+        public function po_gen_attributes_callback() {
+
+            $attributes = wc_get_attribute_taxonomies();
+
+            $attrs = array();
+
+            if (!empty(get_option('po_gen_attributes'))) {
+                $attrs = (array) get_option('po_gen_attributes');
+            }
+
+            ?>
+            <select multiple="multiple" class="po_gen_attributes" name="po_gen_attributes[]" id="po_gen_attributes" data-placeholder='<?php esc_html_e('Select attributes...', 'piy-online-lite' ); ?>' tabindex="-1">
+                <?php
+
+                foreach ( $attributes as $attribute_obj ) {
+                    ?>
+                    <option value="<?php echo esc_attr( wc_attribute_taxonomy_name( $attribute_obj->attribute_name ) ); ?>"
+                        <?php echo in_array(wc_attribute_taxonomy_name($attribute_obj->attribute_name), $attrs) ? 'selected' : ''; ?> ><?php echo esc_html__( $attribute_obj->attribute_label, 'piy-online-lite' ); ?>
+                    </option>
+                    <?php
+                }
+
+                ?>
+
+            </select>
+            <p class="description"><?php esc_html_e('Apply the default template and font to the selected product attributes.', 'piy-online-lite'); ?></p>
+            <?php
+        }
+
+        public function po_gen_price_callback() {
+
+            ?>
+            <input type="text" name="po_gen_price" id="po_gen_price" value="<?php echo esc_attr( get_option('po_gen_price')); ?>" >
+            <p class="description po_gen_price"><?php esc_html_e('Leave this field empty to offer personalised ribbons for free.', 'piy-online-lite'); ?> </p>
+            <?php
+        }
+
+        public function po_gen_text_callback() {
+
+            ?>
+            <input type="text" name="po_gen_text" id="po_gen_text" value="<?php echo esc_attr( get_option('po_gen_text')); ?>" >
+            <p class="description po_gen_text"><?php esc_html_e('Change the text for the text next to the checkbox on the product page. You can use the {price} variable to display the price.', 'piy-online-lite'); ?> </p>
+            <?php
+        }
+
+        public function po_gen_character_limit_callback()
+        {
+            ?>
+            <input type="text" name="po_gen_character_limit" id="po_gen_character_limit" value="<?php echo esc_attr( get_option('po_gen_character_limit')); ?>" >
+            <p class="description po_gen_character_limit"><?php esc_html_e('Set the maximum number of characters for the ribbon text.', 'piy-online-lite'); ?> </p>
+            <?php
+        }
+
+        public function po_gen_button_text_callback() {
+
+            ?>
+            <input type="text" name="po_gen_button_text" id="po_gen_button_text" value="<?php echo esc_attr( get_option('po_gen_button_text')); ?>" >
+            <p class="description po_gen_button_text"><?php esc_html_e('Change the text for the button on the product page. You can use the {price} variable to display the price.', 'piy-online-lite'); ?> </p>
+            <?php
+        }
+
+        public function po_gen_button_color_callback() {
+
+            ?>
+            <input type="text" name="po_gen_button_color" id="po_gen_button_color" value="<?php echo esc_attr( get_option('po_gen_button_color')); ?>" >
+            <p class="description po_gen_button_color"><?php esc_html_e('Change the color of the button on the product page.', 'piy-online-lite'); ?> </p>
+            <?php
+        }
+
+        public function po_gen_button_text_color_callback() {
+
+            ?>
+            <input type="text" name="po_gen_button_text_color" id="po_gen_button_text_color" value="<?php echo esc_attr( get_option('po_gen_button_text_color')); ?>" >
+            <p class="description po_gen_button_text_color"><?php esc_html_e('Change the text color of the button on the product page.', 'piy-online-lite'); ?> </p>
+            <?php
         }
     }
 
