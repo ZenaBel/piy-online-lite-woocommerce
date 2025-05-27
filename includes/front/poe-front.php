@@ -15,7 +15,7 @@ if (!class_exists('POE_Front')) {
 
             add_action('woocommerce_cart_calculate_fees', array($this, 'poe_add_cart_item_fee'), 20);
 
-            add_action('poe_ribbon', array($this, 'poe_show_fields'), 20);
+            add_action('woocommerce_cart_contents', array($this, 'poe_show_fields'), 20);
 
             add_action('woocommerce_thankyou', array($this, 'poe_clear_ribbon_session_data'));
 
