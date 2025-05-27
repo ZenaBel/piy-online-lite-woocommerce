@@ -564,7 +564,7 @@ if (!class_exists('POE_Admin')) {
 
             add_settings_field (
                 'po_gen_button_text_color', // ID used to identify the field throughout the theme
-                esc_html__('Button text color', 'piy-online-lite'), // The label to the left of the option interface element
+                esc_html__('Button text colour', 'piy-online-lite'), // The label to the left of the option interface element
                 array($this, 'poe_gen_button_text_color_callback'),   // The name of the function responsible for rendering the option interface
                 'gen_config_page', // The page on which this option will be displayed
                 'gen_config_sec' // The name of the section to which this field belongs
@@ -576,7 +576,7 @@ if (!class_exists('POE_Admin')) {
 
             add_settings_field (
                 'po_gen_button_color', // ID used to identify the field throughout the theme
-                esc_html__('Button background color', 'piy-online-lite'), // The label to the left of the option interface element
+                esc_html__('Button background colour', 'piy-online-lite'), // The label to the left of the option interface element
                 array($this, 'poe_gen_button_color_callback'),   // The name of the function responsible for rendering the option interface
                 'gen_config_page', // The page on which this option will be displayed
                 'gen_config_sec' // The name of the section to which this field belongs
