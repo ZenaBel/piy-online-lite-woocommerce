@@ -4,17 +4,17 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-if (!class_exists('PO_Admin')) {
-    class PO_Admin
+if (!class_exists('POE_Admin')) {
+    class POE_Admin
     {
 
         public function __construct()
         {
 
             // Add Custom tab icon
-            add_action('admin_head', array($this, 'po_tab_icon'), 20);
+            add_action('admin_head', array($this, 'poe_tab_icon'), 20);
 
-            add_action('admin_enqueue_scripts', array($this, 'po_admin_scripts'), 20);
+            add_action('admin_enqueue_scripts', array($this, 'poe_admin_scripts'), 20);
 
             /**
              *
@@ -23,13 +23,13 @@ if (!class_exists('PO_Admin')) {
              */
 
             // Add PIY Online Tab for product edit page
-            add_filter('woocommerce_product_data_tabs', array($this, 'po_data_tab'), 20);
+            add_filter('woocommerce_product_data_tabs', array($this, 'poe_data_tab'), 20);
 
             // Create fields for PIY Online tab
-            add_filter('woocommerce_product_data_panels', array($this, 'po_data_tab_fields'), 20);
+            add_filter('woocommerce_product_data_panels', array($this, 'poe_data_tab_fields'), 20);
 
             // Save PIY Online Product Data
-            add_action('woocommerce_process_product_meta', array($this, 'po_save_data_tabs'), 20);
+            add_action('woocommerce_process_product_meta', array($this, 'poe_save_data_tabs'), 20);
 
 
             /**
@@ -39,13 +39,13 @@ if (!class_exists('PO_Admin')) {
              */
 
             // Add PIY Online for CATEGORIES
-            add_action('product_cat_add_form_fields', array($this, 'po_new_category_fields'), 20);
+            add_action('product_cat_add_form_fields', array($this, 'poe_new_category_fields'), 20);
 
-            add_action('product_cat_edit_form_fields', array($this, 'po_edit_category'), 20);
+            add_action('product_cat_edit_form_fields', array($this, 'poe_edit_category'), 20);
 
-            add_action('edited_product_cat', array($this, 'po_save_category_fields'), 20, 1);
+            add_action('edited_product_cat', array($this, 'poe_save_category_fields'), 20, 1);
 
-            add_action('create_product_cat', array($this, 'po_save_category_fields'), 20, 1);
+            add_action('create_product_cat', array($this, 'poe_save_category_fields'), 20, 1);
 
             /**
              *
@@ -54,13 +54,13 @@ if (!class_exists('PO_Admin')) {
              */
 
             // Add PIY Online for TAGS
-            add_action('product_tag_add_form_fields', array($this, 'po_new_category_fields'), 20);
+            add_action('product_tag_add_form_fields', array($this, 'poe_new_category_fields'), 20);
 
-            add_action('product_tag_edit_form_fields', array($this, 'po_edit_category'), 20);
+            add_action('product_tag_edit_form_fields', array($this, 'poe_edit_category'), 20);
 
-            add_action('edited_product_tag', array($this, 'po_save_category_fields'), 20, 1);
+            add_action('edited_product_tag', array($this, 'poe_save_category_fields'), 20, 1);
 
-            add_action('create_product_tag', array($this, 'po_save_category_fields'), 20, 1);
+            add_action('create_product_tag', array($this, 'poe_save_category_fields'), 20, 1);
 
             /**
              *
@@ -69,12 +69,12 @@ if (!class_exists('PO_Admin')) {
              */
 
             // Add PIY Online for Woo Submenu
-            add_action('admin_menu', array($this,'po_add_submenu'), 20 );
+            add_action('admin_menu', array($this, 'poe_add_submenu'), 20 );
 
-            add_action('admin_init', array($this, 'po_submenu_tabs'), 20 );
+            add_action('admin_init', array($this, 'poe_submenu_tabs'), 20 );
         }
 
-        public function po_tab_icon()
+        public function poe_tab_icon()
         {
             ?>
             <style>
@@ -86,23 +86,19 @@ if (!class_exists('PO_Admin')) {
             <?php
         }
 
-        public function po_admin_scripts()
+        public function poe_admin_scripts()
         {
 
             $in_footer = true;
-            wp_enqueue_style('po-admin', plugins_url('../../assets/css/po_admin.css', __FILE__), false, '1.0.0');
+            wp_enqueue_style('poe-admin', plugins_url('../../assets/css/poe_admin.css', __FILE__), false, '1.0.0');
 
-            wp_enqueue_script('po-admin', plugins_url('../../assets/js/po_admin.js', __FILE__), array('jquery'), '1.0.0', $in_footer);
-
-            wp_enqueue_style('select2', plugins_url('../../assets/css/select2.min.css', __FILE__), false, '1.0.0');
-
-            wp_enqueue_script('select2', plugins_url('../../assets/js/select2.min.js', __FILE__), array('jquery'), '1.0.0', $in_footer);
+            wp_enqueue_script('poe-admin', plugins_url('../../assets/js/poe_admin.js', __FILE__), array('jquery'), '1.0.0', $in_footer);
 
             $info = array(
                 'admin_url' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('po-ajax-nonce'),
+                'nonce' => wp_create_nonce('poe-ajax-nonce'),
             );
-            wp_localize_script('po-admin', 'info', $info);
+            wp_localize_script('poe-admin', 'info', $info);
         }
 
 
@@ -114,21 +110,21 @@ if (!class_exists('PO_Admin')) {
 
 
         //PRODUCT DATA TAB
-        public function po_data_tab($tabs)
+        public function poe_data_tab($tabs)
         {
 
-            $tabs['po-data-tab'] = array(
+            $tabs['poe-data-tab'] = array(
                 'label' => esc_html__('PIY Online Lite', 'piy-online-lite'),
-                'target' => 'po_tab',
+                'target' => 'poe_tab',
                 'priority' => 80,
             );
             return $tabs;
         }
 
-        public function po_data_tab_fields($post_id)
+        public function poe_data_tab_fields($post_id)
         {
             global $post;
-            wp_nonce_field('po-pro-nonce', 'po_pro_nonce');
+            wp_nonce_field('poe-pro-nonce', 'poe_pro_nonce');
             ?>
 
             <div id="po_tab" class="panel wc-metaboxes-wrapper woocommerce_options_panel">
@@ -208,20 +204,20 @@ if (!class_exists('PO_Admin')) {
             <?php
         }
 
-        public function po_save_data_tabs($post_id) {
-            error_log('PO: Attempting to save data for post_id: ' . $post_id);
+        public function poe_save_data_tabs($post_id) {
+            error_log('POE: Attempting to save data for post_id: ' . $post_id);
 
-            if (!isset($_POST['po_pro_nonce'])) {
-                error_log('PO: Nonce not set in POST data');
+            if (!isset($_POST['poe_pro_nonce'])) {
+                error_log('POE: Nonce not set in POST data');
                 return;
             }
 
-            if (!wp_verify_nonce(sanitize_text_field($_POST['po_pro_nonce']), 'po-pro-nonce')) {
-                error_log('PO: Nonce verification failed');
+            if (!wp_verify_nonce(sanitize_text_field($_POST['poe_pro_nonce']), 'poe-pro-nonce')) {
+                error_log('POE: Nonce verification failed');
                 die('PIY-Online Product Nonce Verification Failed');
             }
 
-            error_log('PO: Nonce verified, processing fields...');
+            error_log('POE: Nonce verified, processing fields...');
 
             $fields = [
                 'po_pro_enable' => 'checkbox',
@@ -249,10 +245,10 @@ if (!class_exists('PO_Admin')) {
                 }
 
                 update_post_meta($post_id, $field, $value);
-                error_log("PO: Updated $field with value: " . $value);
+                error_log("POE: Updated $field with value: " . $value);
             }
 
-            error_log('PO: Data saved successfully for post_id: ' . $post_id);
+            error_log('POE: Data saved successfully for post_id: ' . $post_id);
         }
 
         /**
@@ -263,9 +259,9 @@ if (!class_exists('PO_Admin')) {
 
 
         // Create New Category
-        public function po_new_category_fields()
+        public function poe_new_category_fields()
         {
-            wp_nonce_field('po-cat-nonce', 'po_cat_nonce');
+            wp_nonce_field('poe-cat-nonce', 'poe_cat_nonce');
 
             ?>
             <h3><?php esc_html_e('PIY Online Lite', 'piy-online-lite'); ?></h3>
@@ -309,7 +305,7 @@ if (!class_exists('PO_Admin')) {
         }
 
         //Category Edit
-        public function po_edit_category($term)
+        public function poe_edit_category($term)
         {
             $term_id = $term->term_id;
 
@@ -325,7 +321,7 @@ if (!class_exists('PO_Admin')) {
 
             $po_cat_button_text = get_term_meta($term_id, 'po_cat_button_text', true);
 
-            wp_nonce_field('po-cat-nonce', 'po_cat_nonce');
+            wp_nonce_field('poe-cat-nonce', 'poe_cat_nonce');
 
             ?>
             <tr class="form-field">
@@ -405,11 +401,11 @@ if (!class_exists('PO_Admin')) {
         }
 
         // Save Category PIY Online
-        public function po_save_category_fields($term_id)
+        public function poe_save_category_fields($term_id)
         {
 
-            if (isset($_POST['po_cat_nonce'])) {
-                if (!wp_verify_nonce(sanitize_text_field($_POST['po_cat_nonce']), 'po-cat-nonce')) {
+            if (isset($_POST['poe_cat_nonce'])) {
+                if (!wp_verify_nonce(sanitize_text_field($_POST['poe_cat_nonce']), 'poe-cat-nonce')) {
                     die('PIY-Online Category Verification Failed');
                 }
             }
@@ -439,7 +435,7 @@ if (!class_exists('PO_Admin')) {
 
 
         // ADD PIY Online SUBMENU
-        public function po_add_submenu() {
+        public function poe_add_submenu() {
 
             add_submenu_page(
                 'woocommerce', // parent name
@@ -447,49 +443,33 @@ if (!class_exists('PO_Admin')) {
                 esc_html__( 'PIY Online Lite', 'piy-online-lite' ), // Menu Title
                 'manage_options', // capabilities
                 'piy-online-lite-settings', // page slug
-                array($this,'po_submenu_content') // callback
+                array($this, 'poe_submenu_content') // callback
             );
         }
 
-        public function po_submenu_content() {
-
-            global $active_tab;
-            if ( isset( $_GET[ 'tab' ] )) {
-                $active_tab = sanitize_text_field( $_GET[ 'tab' ] );
-            } else {
-                $active_tab = 'api_configs';
-            }
-
+        public function poe_submenu_content() {
             ?>
             <div class="wrap piyonline">
-
-                <h2> <?php echo esc_html__( 'PIY Online Lite', 'piy-online-lite' ); ?></h2>
+                <h1><?php echo esc_html__('PIY Online Lite Settings', 'piy-online-lite'); ?></h1>
                 <?php settings_errors(); ?>
-                <h2 class="nav-tab-wrapper">
-                    <a href="?page=piy-online-lite-settings&tab=po_gen_config" class="nav-tab nav-tab-active" > <?php esc_html_e( 'Configure PIY Online Lite', 'piy-online-lite' ); ?> </a>
-                </h2>
 
                 <form method="post" action="options.php" id="save_options_form">
                     <?php
-                    settings_fields( 'gen_config' );
-                    do_settings_sections( 'gen_config_page' );
-
+                    settings_fields('gen_config');
+                    do_settings_sections('gen_config_page');
                     submit_button(esc_html__('Save configuration', 'piy-online-lite'), 'primary', 'po_save_configs');
                     ?>
-
                 </form>
             </div>
             <?php
-
         }
-
         /**
          *
          * General Configuration Tabs
          *
          */
 
-        public function po_submenu_tabs() {
+        public function poe_submenu_tabs() {
 
            /**
              *
@@ -499,7 +479,7 @@ if (!class_exists('PO_Admin')) {
 
             add_settings_section(
                 'gen_config_sec', // ID used to identify this section and with which to register options
-                '',  // Title to be displayed on the administration page
+                esc_html__('General Configuration', 'piy-online-lite'),  // Title to be displayed on the administration page
                 array($this, 'gen_config_sec_cb'), // Callback used to render the description of the section
                 'gen_config_page'      // Page on which to add this section of options
             );
@@ -507,7 +487,7 @@ if (!class_exists('PO_Admin')) {
             add_settings_field (
                 'po_gen_emojis', // ID used to identify the field throughout the theme
                 esc_html__('Enable emoji picker', 'piy-online-lite'), // The label to the left of the option interface element
-                array($this, 'po_geb_emojis_cb'),   // The name of the function responsible for rendering the option interface
+                array($this, 'poe_geb_emojis_cb'),   // The name of the function responsible for rendering the option interface
                 'gen_config_page', // The page on which this option will be displayed
                 'gen_config_sec', // The name of the section to which this field belongs
                 array(
@@ -522,7 +502,7 @@ if (!class_exists('PO_Admin')) {
             add_settings_field (
                 'po_gen_button_enable', // ID used to identify the field throughout the theme
                 esc_html__('Enable button', 'piy-online-lite'), // The label to the left of the option interface element
-                array($this, 'po_gen_button_enable_cb'),   // The name of the function responsible for rendering the option interface
+                array($this, 'poe_gen_button_enable_cb'),   // The name of the function responsible for rendering the option interface
                 'gen_config_page', // The page on which this option will be displayed
                 'gen_config_sec', // The name of the section to which this field belongs
                 array(
@@ -535,57 +515,9 @@ if (!class_exists('PO_Admin')) {
             );
 
             add_settings_field (
-                'po_gen_products', // ID used to identify the field throughout the theme
-                esc_html__('Activate PIY Online Lite for specific products', 'piy-online-lite'), // The label to the left of the option interface element
-                array($this, 'po_gen_products_cb'), // The name of the function responsible for rendering the option interface
-                'gen_config_page', // The page on which this option will be displayed
-                'gen_config_sec' // The name of the section to which this field belongs
-            );
-            register_setting(
-                'gen_config',
-                'po_gen_products'
-            );
-
-            add_settings_field (
-                'po_gen_categories', // ID used to identify the field throughout the theme
-                esc_html__('Activate PIY Online Lite for specific categories', 'piy-online-lite'), // The label to the left of the option interface element
-                array($this, 'po_gen_categories_callback'),   // The name of the function responsible for rendering the option interface
-                'gen_config_page', // The page on which this option will be displayed
-                'gen_config_sec' // The name of the section to which this field belongs
-            );
-            register_setting(
-                'gen_config',
-                'po_gen_categories'
-            );
-
-            add_settings_field (
-                'po_gen_tags', // ID used to identify the field throughout the theme
-                esc_html__('Activate PIY Online Lite for specific tags', 'piy-online-lite'), // The label to the left of the option interface element
-                array($this, 'po_gen_tags_callback'),   // The name of the function responsible for rendering the option interface
-                'gen_config_page', // The page on which this option will be displayed
-                'gen_config_sec' // The name of the section to which this field belongs
-            );
-            register_setting(
-                'gen_config',
-                'po_gen_tags'
-            );
-
-            add_settings_field (
-                'po_gen_attributes', // ID used to identify the field throughout the theme
-                esc_html__('Activate PIY Online Lite for specific attributes', 'piy-online-lite'), // The label to the left of the option interface element
-                array($this, 'po_gen_attributes_callback'),   // The name of the function responsible for rendering the option interface
-                'gen_config_page', // The page on which this option will be displayed
-                'gen_config_sec' // The name of the section to which this field belongs
-            );
-            register_setting(
-                'gen_config',
-                'po_gen_attributes'
-            );
-
-            add_settings_field (
                 'po_gen_price', // ID used to identify the field throughout the theme
                 esc_html__('Ribbon price', 'piy-online-lite'), // The label to the left of the option interface element
-                array($this, 'po_gen_price_callback'),   // The name of the function responsible for rendering the option interface
+                array($this, 'poe_gen_price_callback'),   // The name of the function responsible for rendering the option interface
                 'gen_config_page', // The page on which this option will be displayed
                 'gen_config_sec' // The name of the section to which this field belongs
             );
@@ -597,7 +529,7 @@ if (!class_exists('PO_Admin')) {
             add_settings_field (
                 'po_gen_text', // ID used to identify the field throughout the theme
                 esc_html__('Custom label', 'piy-online-lite'), // The label to the left of the option interface element
-                array($this, 'po_gen_text_callback'),   // The name of the function responsible for rendering the option interface
+                array($this, 'poe_gen_text_callback'),   // The name of the function responsible for rendering the option interface
                 'gen_config_page', // The page on which this option will be displayed
                 'gen_config_sec' // The name of the section to which this field belongs
             );
@@ -609,7 +541,7 @@ if (!class_exists('PO_Admin')) {
             add_settings_field (
                 'po_gen_character_limit', // ID used to identify the field throughout the theme
                 esc_html__('Ribbon text character limit', 'piy-online-lite'), // The label to the left of the option interface element
-                array($this, 'po_gen_character_limit_callback'),   // The name of the function responsible for rendering the option interface
+                array($this, 'poe_gen_character_limit_callback'),   // The name of the function responsible for rendering the option interface
                 'gen_config_page', // The page on which this option will be displayed
                 'gen_config_sec' // The name of the section to which this field belongs
             );
@@ -621,7 +553,7 @@ if (!class_exists('PO_Admin')) {
             add_settings_field (
                 'po_gen_button_text', // ID used to identify the field throughout the theme
                 esc_html__('Button text', 'piy-online-lite'), // The label to the left of the option interface element
-                array($this, 'po_gen_button_text_callback'),   // The name of the function responsible for rendering the option interface
+                array($this, 'poe_gen_button_text_callback'),   // The name of the function responsible for rendering the option interface
                 'gen_config_page', // The page on which this option will be displayed
                 'gen_config_sec' // The name of the section to which this field belongs
             );
@@ -633,7 +565,7 @@ if (!class_exists('PO_Admin')) {
             add_settings_field (
                 'po_gen_button_text_color', // ID used to identify the field throughout the theme
                 esc_html__('Button text color', 'piy-online-lite'), // The label to the left of the option interface element
-                array($this, 'po_gen_button_text_color_callback'),   // The name of the function responsible for rendering the option interface
+                array($this, 'poe_gen_button_text_color_callback'),   // The name of the function responsible for rendering the option interface
                 'gen_config_page', // The page on which this option will be displayed
                 'gen_config_sec' // The name of the section to which this field belongs
             );
@@ -645,7 +577,7 @@ if (!class_exists('PO_Admin')) {
             add_settings_field (
                 'po_gen_button_color', // ID used to identify the field throughout the theme
                 esc_html__('Button background color', 'piy-online-lite'), // The label to the left of the option interface element
-                array($this, 'po_gen_button_color_callback'),   // The name of the function responsible for rendering the option interface
+                array($this, 'poe_gen_button_color_callback'),   // The name of the function responsible for rendering the option interface
                 'gen_config_page', // The page on which this option will be displayed
                 'gen_config_sec' // The name of the section to which this field belongs
             );
@@ -661,8 +593,6 @@ if (!class_exists('PO_Admin')) {
          * General Configuration
          *
          */
-
-
         public function gen_config_sec_cb() {
             ?>
             <h2><?php echo esc_html__('Configure PIY Online Lite', 'piy-online-lite'); ?></h2>
@@ -670,7 +600,7 @@ if (!class_exists('PO_Admin')) {
             <?php
         }
 
-        public function po_geb_emojis_cb( $args) {
+        public function poe_geb_emojis_cb($args) {
             ?>
             <input type="checkbox" name="po_gen_emojis" id="po_gen_emojis" class="fields-lenght" value="yes" <?php echo checked('yes', get_option('po_gen_emojis') ); ?>
             />
@@ -678,7 +608,7 @@ if (!class_exists('PO_Admin')) {
             <?php
         }
 
-        public function po_gen_button_enable_cb( $args) {
+        public function poe_gen_button_enable_cb($args) {
             ?>
             <input type="checkbox" name="po_gen_button_enable" id="po_gen_button_enable" class="fields-lenght" value="yes" <?php echo checked('yes', get_option('po_gen_button_enable') ); ?>
             />
@@ -686,113 +616,7 @@ if (!class_exists('PO_Admin')) {
             <?php
         }
 
-        public function po_gen_products_cb() {
-            ?>
-            <select multiple="multiple" class="po_gen_products" name="po_gen_products[]" id="po_gen_products" data-placeholder='<?php esc_html_e('Select products...', 'piy-online-lite' ); ?>' tabindex="-1">
-                <?php
-
-                if (!empty(get_option('po_gen_products'))) {
-                    $spec_pro = get_option('po_gen_products');
-                } else {
-                    $spec_pro = array();
-                }
-
-                foreach ($spec_pro as $pro_id) {
-                    $product = wc_get_product($pro_id);
-                    ?>
-                    <option value="<?php echo esc_attr( $pro_id ); ?>" <?php echo selected(true, true, false); ?>> <?php echo esc_html( wp_strip_all_tags( $product->get_formatted_name() ) ); ?> </option>
-                    <?php
-                }
-                ?>
-            </select>
-            <p class="description"><?php esc_html_e('Apply the default template and font to the selected products.', 'piy-online-lite'); ?></p>
-            <?php
-        }
-
-        public function po_gen_categories_callback() {
-
-            $terms    = get_terms( array('taxonomy' => 'product_cat', 'hide_empty' => false) );
-            $spec_cat = array();
-
-            if (!empty(get_option('po_gen_categories'))) {
-                $spec_cat = (array) get_option('po_gen_categories');
-            }
-            ?>
-            <select multiple="multiple" class="po_gen_categories" name="po_gen_categories[]" id="po_gen_categories" data-placeholder='<?php esc_html_e('Select categories...', 'piy-online-lite' ); ?>' tabindex="-1">
-                <?php
-
-                foreach ($terms as $term) {
-
-                    ?>
-                    <option value="<?php echo esc_attr( $term->term_id ); ?>"
-                        <?php echo in_array($term->term_id, $spec_cat) ? 'selected' : ''; ?> ><?php echo esc_html__( $term->name, 'piy-online-lite' ); ?>
-                    </option>
-                    <?php
-                }
-                ?>
-
-            </select>
-            <p class="description"><?php esc_html_e('Apply the default template and font to the selected product categories.', 'piy-online-lite'); ?></p>
-            <?php
-        }
-
-        public function po_gen_tags_callback() {
-
-            $tags     = get_terms( array('taxonomy' => 'product_tag', 'hide_empty' => false) );
-            $spec_cat = array();
-
-            if (!empty(get_option('po_gen_tags'))) {
-                $spec_cat = (array) get_option('po_gen_tags');
-            }
-            ?>
-            <select multiple="multiple" class="po_gen_tags" name="po_gen_tags[]" id="po_gen_tags" data-placeholder='<?php esc_html_e('Select tags...', 'piy-online-lite' ); ?>' tabindex="-1">
-                <?php
-
-                foreach ($tags as $tag) {
-
-                    ?>
-                    <option value="<?php echo esc_attr( $tag->term_id ); ?>"
-                        <?php echo in_array($tag->term_id, $spec_cat) ? 'selected' : ''; ?> ><?php echo esc_html__( $tag->name, 'piy-online-lite' ); ?>
-                    </option>
-                    <?php
-                }
-                ?>
-
-            </select>
-            <p class="description"><?php esc_html_e('Apply the default template and font to the selected product tags.', 'piy-online-lite'); ?></p>
-            <?php
-        }
-
-        public function po_gen_attributes_callback() {
-
-            $attributes = wc_get_attribute_taxonomies();
-
-            $attrs = array();
-
-            if (!empty(get_option('po_gen_attributes'))) {
-                $attrs = (array) get_option('po_gen_attributes');
-            }
-
-            ?>
-            <select multiple="multiple" class="po_gen_attributes" name="po_gen_attributes[]" id="po_gen_attributes" data-placeholder='<?php esc_html_e('Select attributes...', 'piy-online-lite' ); ?>' tabindex="-1">
-                <?php
-
-                foreach ( $attributes as $attribute_obj ) {
-                    ?>
-                    <option value="<?php echo esc_attr( wc_attribute_taxonomy_name( $attribute_obj->attribute_name ) ); ?>"
-                        <?php echo in_array(wc_attribute_taxonomy_name($attribute_obj->attribute_name), $attrs) ? 'selected' : ''; ?> ><?php echo esc_html__( $attribute_obj->attribute_label, 'piy-online-lite' ); ?>
-                    </option>
-                    <?php
-                }
-
-                ?>
-
-            </select>
-            <p class="description"><?php esc_html_e('Apply the default template and font to the selected product attributes.', 'piy-online-lite'); ?></p>
-            <?php
-        }
-
-        public function po_gen_price_callback() {
+        public function poe_gen_price_callback() {
 
             ?>
             <input type="text" name="po_gen_price" id="po_gen_price" value="<?php echo esc_attr( get_option('po_gen_price')); ?>" >
@@ -800,7 +624,7 @@ if (!class_exists('PO_Admin')) {
             <?php
         }
 
-        public function po_gen_text_callback() {
+        public function poe_gen_text_callback() {
 
             ?>
             <input type="text" name="po_gen_text" id="po_gen_text" value="<?php echo esc_attr( get_option('po_gen_text')); ?>" >
@@ -808,7 +632,7 @@ if (!class_exists('PO_Admin')) {
             <?php
         }
 
-        public function po_gen_character_limit_callback()
+        public function poe_gen_character_limit_callback()
         {
             ?>
             <input type="text" name="po_gen_character_limit" id="po_gen_character_limit" value="<?php echo esc_attr( get_option('po_gen_character_limit')); ?>" >
@@ -816,7 +640,7 @@ if (!class_exists('PO_Admin')) {
             <?php
         }
 
-        public function po_gen_button_text_callback() {
+        public function poe_gen_button_text_callback() {
 
             ?>
             <input type="text" name="po_gen_button_text" id="po_gen_button_text" value="<?php echo esc_attr( get_option('po_gen_button_text')); ?>" >
@@ -824,7 +648,7 @@ if (!class_exists('PO_Admin')) {
             <?php
         }
 
-        public function po_gen_button_color_callback() {
+        public function poe_gen_button_color_callback() {
 
             ?>
             <input type="text" name="po_gen_button_color" id="po_gen_button_color" value="<?php echo esc_attr( get_option('po_gen_button_color')); ?>" >
@@ -832,7 +656,7 @@ if (!class_exists('PO_Admin')) {
             <?php
         }
 
-        public function po_gen_button_text_color_callback() {
+        public function poe_gen_button_text_color_callback() {
 
             ?>
             <input type="text" name="po_gen_button_text_color" id="po_gen_button_text_color" value="<?php echo esc_attr( get_option('po_gen_button_text_color')); ?>" >
@@ -841,5 +665,5 @@ if (!class_exists('PO_Admin')) {
         }
     }
 
-    new PO_Admin();
+    new POE_Admin();
 }

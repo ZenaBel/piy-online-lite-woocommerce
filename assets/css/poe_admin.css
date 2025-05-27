@@ -71,14 +71,14 @@
 .piyonline form#save_options_form {
     padding: 13px 30px;
     background: #fff;
-    margin: 0px 0px;
+    margin: 0 0;
     border-radius: 10px;
 }
 
 .piyonline form h2 {
     font-size: 24px !important;
     margin-top: 30px !important;
-    margin-left: 0px !important
+    margin-left: 0 !important
 }
 
 .piyonline h2.nav-tab-wrapper {
@@ -116,7 +116,7 @@
     font-weight: normal;
 }
 
-.piyonline .nav-tab-active, .piyonline nav-tab-active:hover {
+.piyonline .nav-tab-active, .piyonline .nav-tab-active:hover {
     border-radius: 50px;
     border: none;
     background: #000 !important;
