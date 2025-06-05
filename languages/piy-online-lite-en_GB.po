@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PIY Online Lite\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-27 10:49+0000\n"
-"PO-Revision-Date: 2025-05-27 10:58+0000\n"
+"POT-Creation-Date: 2025-06-05 07:55+0000\n"
+"PO-Revision-Date: 2025-06-05 07:57+0000\n"
 "Last-Translator: \n"
 "Language-Team: English (UK)\n"
 "Language: en_GB\n"
@@ -24,9 +24,24 @@ msgstr "Activate PIY Online Lite"
 msgid "Activate PIY Online Lite for Category"
 msgstr "Activate PIY Online Lite for Category"
 
-#: includes/front/poe-front.php:114
+#: includes/front/poe-front.php:125
 msgid "Add a personalised ribbon? Click here"
 msgstr "Add a personalised ribbon? Click here"
+
+#. ID used to identify the field throughout the theme
+#: includes/admin/poe-admin.php:564
+msgid "Add to cart background colour"
+msgstr "Add to cart background colour"
+
+#. ID used to identify the field throughout the theme
+#: includes/admin/poe-admin.php:540
+msgid "Add to cart text"
+msgstr "Add to cart text"
+
+#. ID used to identify the field throughout the theme
+#: includes/admin/poe-admin.php:552
+msgid "Add to cart text colour"
+msgstr "Add to cart text colour"
 
 #: includes/admin/poe-admin.php:494
 msgid "Allow customers to select emojis in the ribbon text field."
@@ -44,72 +59,32 @@ msgstr "Allow emojis picker"
 msgid "Allow/Disallow Emojis for ribbon text."
 msgstr "Allow/Disallow Emojis for ribbon text."
 
-#. ID used to identify the field throughout the theme
-#: includes/admin/poe-admin.php:579
-msgid "Button background color"
-msgstr "Button background colour"
-
-#. ID used to identify the field throughout the theme
 #: includes/admin/poe-admin.php:194 includes/admin/poe-admin.php:299
-#: includes/admin/poe-admin.php:392 includes/admin/poe-admin.php:555
+#: includes/admin/poe-admin.php:392
 msgid "Button text"
 msgstr "Button text"
-
-#. ID used to identify the field throughout the theme
-#: includes/admin/poe-admin.php:567
-msgid "Button text color"
-msgstr "Button text colour"
-
-#: includes/admin/poe-admin.php:655
-msgid "Change the color of the button on the product page."
-msgstr "Change the color of the button on the product page."
-
-#: includes/admin/poe-admin.php:663
-msgid "Change the text color of the button on the product page."
-msgstr "Change the text color of the button on the product page."
-
-#: includes/admin/poe-admin.php:647
-msgid ""
-"Change the text for the button on the product page. You can use the {price} "
-"variable to display the price."
-msgstr ""
-"Change the text for the button on the product page. You can use the {price} "
-"variable to display the price."
-
-#: includes/admin/poe-admin.php:631
-msgid ""
-"Change the text for the text next to the checkbox on the product page. You "
-"can use the {price} variable to display the price."
-msgstr ""
-"Change the text for the text next to the checkbox on the product page. You "
-"can use the {price} variable to display the price."
 
 #. Author of the plugin
 msgid "Codi"
 msgstr "Codi"
 
-#: includes/admin/poe-admin.php:598
+#: includes/admin/poe-admin.php:583
 msgid "Configure PIY Online Lite"
 msgstr "Configure PIY Online Lite"
 
 #. ID used to identify the field throughout the theme
-#: includes/admin/poe-admin.php:531
+#: includes/admin/poe-admin.php:516
 msgid "Custom label"
 msgstr "Custom label"
-
-#. ID used to identify the field throughout the theme
-#: includes/admin/poe-admin.php:504
-msgid "Enable button"
-msgstr "Enable button"
 
 #. ID used to identify the field throughout the theme
 #: includes/admin/poe-admin.php:148 includes/admin/poe-admin.php:489
 msgid "Enable emoji picker"
 msgstr "Enable emoji picker"
 
-#: includes/admin/poe-admin.php:509
-msgid "Enable/Disable the button on the ribbon."
-msgstr "Enable/Disable the button on the ribbon."
+#: includes/front/poe-front.php:72 includes/front/poe-front.php:134
+msgid "Enter the message to be printed onto the ribbon…"
+msgstr "Enter the message to be printed onto the ribbon…"
 
 #. ID used to identify this section and with which to register options
 #: includes/admin/poe-admin.php:482
@@ -121,29 +96,37 @@ msgstr "General Configuration"
 msgid "https://piyribbons.com"
 msgstr "https://piyribbons.com"
 
+#: includes/poe-ajax.php:26
+msgid "Invalid request method."
+msgstr "Invalid request method."
+
 #: includes/admin/poe-admin.php:172 includes/admin/poe-admin.php:289
-#: includes/admin/poe-admin.php:375 includes/admin/poe-admin.php:623
+#: includes/admin/poe-admin.php:375 includes/admin/poe-admin.php:608
 msgid "Leave this field empty to offer personalised ribbons for free."
 msgstr "Leave this field empty to offer personalised ribbons for free."
 
-#: includes/front/poe-front.php:45 includes/front/poe-front.php:65
-#: includes/front/poe-front.php:95 includes/front/poe-front.php:123
-#: includes/front/poe-front.php:161
+#: includes/front/poe-front.php:45 includes/front/poe-front.php:106
+#: includes/front/poe-front.php:179
 msgid "Personalised ribbon"
 msgstr "Personalised ribbon"
 
-#: includes/poe-ajax.php:27
-msgid "Personalised ribbon added!"
-msgstr "Personalised ribbon added!"
+#: includes/front/poe-front.php:180
+msgid "Personalised ribbon (free)"
+msgstr "Personalised ribbon (free)"
 
-#: includes/poe-ajax.php:51
+#: includes/poe-ajax.php:85
 msgid "Personalised ribbon removed."
 msgstr "Personalised ribbon removed."
 
-#: includes/front/poe-front.php:160
+#: includes/front/poe-front.php:175
 #, php-format
 msgid "Personalised ribbon: \"%s\""
 msgstr "Personalised ribbon: \"%s\""
+
+#: includes/front/poe-front.php:176
+#, php-format
+msgid "Personalised ribbon: \"%s\" (free)"
+msgstr "Personalised ribbon: \"%s\" (free)"
 
 #. parent name
 #. Page Title
@@ -166,21 +149,38 @@ msgstr ""
 msgid "PIY Online Lite Settings"
 msgstr "PIY Online Lite Settings"
 
-#: includes/front/poe-front.php:83 includes/front/poe-front.php:137
+#: includes/front/poe-front.php:95 includes/front/poe-front.php:152
+msgid "Please enter a message for the ribbon."
+msgstr "Please enter a message for the ribbon."
+
+#: includes/front/poe-front.php:91 includes/front/poe-front.php:148
 msgid "Remove"
 msgstr "Remove"
 
 #. ID used to identify the field throughout the theme
 #: includes/admin/poe-admin.php:171 includes/admin/poe-admin.php:287
-#: includes/admin/poe-admin.php:370 includes/admin/poe-admin.php:519
+#: includes/admin/poe-admin.php:370 includes/admin/poe-admin.php:504
 msgid "Ribbon price"
 msgstr "Ribbon price"
 
 #. ID used to identify the field throughout the theme
 #: includes/admin/poe-admin.php:183 includes/admin/poe-admin.php:293
-#: includes/admin/poe-admin.php:381 includes/admin/poe-admin.php:543
+#: includes/admin/poe-admin.php:381 includes/admin/poe-admin.php:528
 msgid "Ribbon text character limit"
 msgstr "Ribbon text character limit"
+
+#: includes/poe-ajax.php:53
+msgid "Ribbon text exceeds the character limit of %d characters."
+msgstr "Ribbon text exceeds the character limit of %d characters."
+
+#: includes/poe-ajax.php:40 includes/poe-ajax.php:41
+msgid "Ribbon text is required."
+msgstr "Ribbon text is required."
+
+#: includes/poe-ajax.php:63
+#, php-format
+msgid "Ribbon text set to: \"%s\""
+msgstr "Ribbon text set to: \"%s\""
 
 #: includes/admin/poe-admin.php:460
 msgid "Save configuration"
@@ -191,12 +191,16 @@ msgstr "Save configuration"
 msgid "Section title"
 msgstr "Section title"
 
+#: includes/poe-ajax.php:33
+msgid "Security check failed. Please refresh the page and try again."
+msgstr "Security check failed. Please refresh the page and try again."
+
 #: includes/admin/poe-admin.php:184 includes/admin/poe-admin.php:295
-#: includes/admin/poe-admin.php:386 includes/admin/poe-admin.php:639
+#: includes/admin/poe-admin.php:386 includes/admin/poe-admin.php:624
 msgid "Set the maximum number of characters for the ribbon text."
 msgstr "Set the maximum number of characters for the ribbon text."
 
-#: includes/admin/poe-admin.php:599
+#: includes/admin/poe-admin.php:584
 msgid ""
 "The settings below can be overridden on product level, category level and "
 "tag level."
@@ -233,3 +237,7 @@ msgstr ""
 #: includes/admin/poe-admin.php:149
 msgid "Whether or not enable customers to add emojis."
 msgstr "Whether or not enable customers to add emojis."
+
+#: includes/admin/poe-admin.php:616 includes/admin/poe-admin.php:632
+msgid "You can use the {price} variable to display the price."
+msgstr "You can use the {price} variable to display the price."

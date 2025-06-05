@@ -500,21 +500,6 @@ if (!class_exists('POE_Admin')) {
             );
 
             add_settings_field (
-                'po_gen_button_enable', // ID used to identify the field throughout the theme
-                esc_html__('Enable button', 'piy-online-lite'), // The label to the left of the option interface element
-                array($this, 'poe_gen_button_enable_cb'),   // The name of the function responsible for rendering the option interface
-                'gen_config_page', // The page on which this option will be displayed
-                'gen_config_sec', // The name of the section to which this field belongs
-                array(
-                    esc_html__('Enable/Disable the button on the ribbon.', 'piy-online-lite'),
-                )
-            );
-            register_setting(
-                'gen_config',
-                'po_gen_button_enable'
-            );
-
-            add_settings_field (
                 'po_gen_price', // ID used to identify the field throughout the theme
                 esc_html__('Ribbon price', 'piy-online-lite'), // The label to the left of the option interface element
                 array($this, 'poe_gen_price_callback'),   // The name of the function responsible for rendering the option interface
@@ -552,7 +537,7 @@ if (!class_exists('POE_Admin')) {
 
             add_settings_field (
                 'po_gen_button_text', // ID used to identify the field throughout the theme
-                esc_html__('Button text', 'piy-online-lite'), // The label to the left of the option interface element
+                esc_html__('Add to cart text', 'piy-online-lite'), // The label to the left of the option interface element
                 array($this, 'poe_gen_button_text_callback'),   // The name of the function responsible for rendering the option interface
                 'gen_config_page', // The page on which this option will be displayed
                 'gen_config_sec' // The name of the section to which this field belongs
@@ -564,7 +549,7 @@ if (!class_exists('POE_Admin')) {
 
             add_settings_field (
                 'po_gen_button_text_color', // ID used to identify the field throughout the theme
-                esc_html__('Button text colour', 'piy-online-lite'), // The label to the left of the option interface element
+                esc_html__('Add to cart text colour', 'piy-online-lite'), // The label to the left of the option interface element
                 array($this, 'poe_gen_button_text_color_callback'),   // The name of the function responsible for rendering the option interface
                 'gen_config_page', // The page on which this option will be displayed
                 'gen_config_sec' // The name of the section to which this field belongs
@@ -576,7 +561,7 @@ if (!class_exists('POE_Admin')) {
 
             add_settings_field (
                 'po_gen_button_color', // ID used to identify the field throughout the theme
-                esc_html__('Button background colour', 'piy-online-lite'), // The label to the left of the option interface element
+                esc_html__('Add to cart background colour', 'piy-online-lite'), // The label to the left of the option interface element
                 array($this, 'poe_gen_button_color_callback'),   // The name of the function responsible for rendering the option interface
                 'gen_config_page', // The page on which this option will be displayed
                 'gen_config_sec' // The name of the section to which this field belongs
@@ -628,7 +613,7 @@ if (!class_exists('POE_Admin')) {
 
             ?>
             <input type="text" name="po_gen_text" id="po_gen_text" value="<?php echo esc_attr( get_option('po_gen_text')); ?>" >
-            <p class="description po_gen_text"><?php esc_html_e('Change the text for the text next to the checkbox on the product page. You can use the {price} variable to display the price.', 'piy-online-lite'); ?> </p>
+            <p class="description po_gen_text"><?php esc_html_e('You can use the {price} variable to display the price.', 'piy-online-lite'); ?> </p>
             <?php
         }
 
@@ -644,7 +629,7 @@ if (!class_exists('POE_Admin')) {
 
             ?>
             <input type="text" name="po_gen_button_text" id="po_gen_button_text" value="<?php echo esc_attr( get_option('po_gen_button_text')); ?>" >
-            <p class="description po_gen_button_text"><?php esc_html_e('Change the text for the button on the product page. You can use the {price} variable to display the price.', 'piy-online-lite'); ?> </p>
+            <p class="description po_gen_button_text"><?php esc_html_e('You can use the {price} variable to display the price.', 'piy-online-lite'); ?> </p>
             <?php
         }
 
@@ -652,7 +637,6 @@ if (!class_exists('POE_Admin')) {
 
             ?>
             <input type="text" name="po_gen_button_color" id="po_gen_button_color" value="<?php echo esc_attr( get_option('po_gen_button_color')); ?>" >
-            <p class="description po_gen_button_color"><?php esc_html_e('Change the color of the button on the product page.', 'piy-online-lite'); ?> </p>
             <?php
         }
 
@@ -660,7 +644,6 @@ if (!class_exists('POE_Admin')) {
 
             ?>
             <input type="text" name="po_gen_button_text_color" id="po_gen_button_text_color" value="<?php echo esc_attr( get_option('po_gen_button_text_color')); ?>" >
-            <p class="description po_gen_button_text_color"><?php esc_html_e('Change the text color of the button on the product page.', 'piy-online-lite'); ?> </p>
             <?php
         }
     }

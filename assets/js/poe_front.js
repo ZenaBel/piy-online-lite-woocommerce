@@ -1,6 +1,7 @@
 jQuery(document).ready(function($){
 
 	var ajaxurl = info.admin_url;
+	var poeNonce = info.poe_nonce;
 
 	initEmojiPicker();
 
@@ -10,13 +11,24 @@ jQuery(document).ready(function($){
 		const ribbonText = jQuery('#po_text').val();
 		const addRibbon = true; // або визначати, чи обрано стрічку
 
+		$('.ribbon-error-message').hide();
+
+		if (!ribbonText.trim()) {
+			$('.ribbon-error-message').show();
+			return;
+		}
+
 		jQuery.post(ajaxurl, {
 			action: 'poe_submit',
 			add_ribbon: addRibbon,
-			ribbon_text: ribbonText
+			ribbon_text: ribbonText,
+			_wpnonce: poeNonce
 		}, function (response) {
-			jQuery('body').trigger('update_checkout');
-			jQuery('button.button[name="update_cart"]').attr('disabled', false);
+			const $updateButton = jQuery('button[name="update_cart"]');
+			if ($updateButton.length) {
+				$updateButton.prop('disabled', false);
+				$updateButton.trigger('click');
+			}
 		});
 	});
 	// Видалення стрічки
@@ -30,7 +42,11 @@ jQuery(document).ready(function($){
 			success: function() {
 				// Очистити поле введення
 				$('#po_text').val('');
-				jQuery('button.button[name="update_cart"]').attr('disabled', false);
+				const $updateButton = jQuery('button[name="update_cart"]');
+				if ($updateButton.length) {
+					$updateButton.prop('disabled', false);
+					$updateButton.trigger('click');
+				}
 			}
 		});
 	});
@@ -46,13 +62,21 @@ jQuery(document).ready(function($){
 	$('#add_ribbon_btn').on('click', function() {
 		var ribbonText = $('#ribbon_text_input').val();
 
+		$('.ribbon-error-message').hide();
+
+		if (!ribbonText.trim()) {
+			$('.ribbon-error-message').show();
+			return;
+		}
+
 		$.ajax({
 			url: ajaxurl,
 			type: 'POST',
 			data: {
 				action: 'poe_submit',
 				add_ribbon: true,
-				ribbon_text: ribbonText
+				ribbon_text: ribbonText,
+				_wpnonce: poeNonce
 			},
 			success: function() {
 				$('body').trigger('update_checkout');

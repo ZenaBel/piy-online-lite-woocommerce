@@ -33,7 +33,7 @@ if (!class_exists('POE_Front')) {
 
             $info = array(
                 'admin_url' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('poe-ajax-nonce'),
+                'poe_nonce' => wp_create_nonce('poe-ajax-nonce'),
             );
 
             wp_localize_script('poe-front', 'info', $info);
@@ -53,8 +53,8 @@ if (!class_exists('POE_Front')) {
                 $button_text = str_replace('{price}', strip_tags(wc_price($ribbon_price)), $button_text);
                 $label_text = str_replace('{price}', strip_tags(wc_price($ribbon_price)), $label_text);
             } else {
-                $button_text = str_replace('{price}', '', $button_text);
-                $label_text = str_replace('{price}', '', $label_text);
+                $button_text = str_replace('{price}', 'free', $button_text);
+                $label_text = str_replace('{price}', 'free', $label_text);
             }
 
             ?>
@@ -62,11 +62,19 @@ if (!class_exists('POE_Front')) {
                 <td class="product-custom-text" colspan="6">
                     <div class="poe-ribbon">
                         <label class="label-personalised-ribbon" for="poe_personalised_ribbon"><?php esc_html_e($label_text, 'piy-online-lite'); ?>
-                            <input type="text" name="poe_personalised_ribbon" id="po_text" class="emoji-field input-text" data-emoji-picker="<?php echo esc_attr($emoji_picker); ?>" autocomplete="off" <?php if ($character_limit) : ?>maxlength="<?php echo esc_attr($character_limit); ?>"<?php endif; ?> placeholder="<?php esc_attr_e('Personalised ribbon', 'piy-online-lite'); ?>">
-                            <?php if ('yes' == $emoji_picker) : ?>
-                                <div id="emoji-picker"></div>
-                            <?php endif; ?>
+                            <input type="text"
+                                   name="poe_personalised_ribbon"
+                                   id="po_text"
+                                   class="emoji-field input-text"
+                                   data-emoji-picker="<?php echo esc_attr($emoji_picker); ?>"
+                                   autocomplete="off"
+                                   <?php if ($character_limit) : ?>maxlength="<?php echo esc_attr($character_limit); ?>"<?php endif; ?>
+                                   placeholder="<?php esc_attr_e('Enter the message to be printed onto the ribbon…', 'piy-online-lite'); ?>"
+                            >
                         </label>
+                        <?php if ('yes' == $emoji_picker) : ?>
+                            <div id="emoji-picker"></div>
+                        <?php endif; ?>
                         <button type="submit"
                                 id="poe_submit"
                                 class="button-personalised-ribbon"
@@ -82,6 +90,9 @@ if (!class_exists('POE_Front')) {
                                 style="background-color: #ff0000; color: #ffffff; margin-left: 10px;">
                             <?php esc_html_e('Remove', 'piy-online-lite'); ?>
                         </button>
+                    </div>
+                    <div class="ribbon-error-message" style="display: none; color: red;">
+                        <?php esc_html_e('Please enter a message for the ribbon.', 'piy-online-lite'); ?>
                     </div>
                 </td>
             </tr>
@@ -103,8 +114,8 @@ if (!class_exists('POE_Front')) {
                 $button_text = str_replace('{price}', strip_tags(wc_price($ribbon_price)), $button_text);
                 $label_text = str_replace('{price}', strip_tags(wc_price($ribbon_price)), $label_text);
             } else {
-                $button_text = str_replace('{price}', '', $button_text);
-                $label_text = str_replace('{price}', '', $label_text);
+                $button_text = str_replace('{price}', 'free', $button_text);
+                $label_text = str_replace('{price}', 'free', $label_text);
             }
 
             ?>
@@ -120,7 +131,7 @@ if (!class_exists('POE_Front')) {
                         <?php esc_html_e($label_text, 'piy-online-lite'); ?>
                         <input type="text"
                                id="ribbon_text_input"
-                               placeholder="<?php esc_attr_e('Personalised ribbon', 'piy-online-lite'); ?>"
+                               placeholder="<?php esc_attr_e('Enter the message to be printed onto the ribbon…', 'piy-online-lite'); ?>"
                                class="emoji-field input-text"
                                data-emoji-picker="<?php echo esc_attr($emoji_picker); ?>"
                                autocomplete="off"
@@ -131,11 +142,14 @@ if (!class_exists('POE_Front')) {
                         <div id="emoji-picker"></div>
                     <?php endif; ?>
                     <button type="button" id="add_ribbon_btn" class="button" style="background-color: <?php echo esc_attr($button_color); ?>; color: <?php echo esc_attr($button_text_color); ?>;">
-                        <span class="dashicons dashicons-yes"></span> <?php esc_html_e($button_text, 'piy-online-lite'); ?>
+                        <?php esc_html_e($button_text, 'piy-online-lite'); ?>
                     </button>
                     <button type="button" id="remove_ribbon_btn" class="button">
-                        <span class="dashicons dashicons-no"></span> <?php esc_html_e('Remove', 'piy-online-lite'); ?>
+                        <?php esc_html_e('Remove', 'piy-online-lite'); ?>
                     </button>
+                </div>
+                <div class="ribbon-error-message" style="display: none; color: red;">
+                    <?php esc_html_e('Please enter a message for the ribbon.', 'piy-online-lite'); ?>
                 </div>
             </div>
             <?php
@@ -154,15 +168,21 @@ if (!class_exists('POE_Front')) {
                 $price = (float) get_option('po_gen_price');
                 $ribbon_text = WC()->session->get('ribbon_text', '');
 
-                if ($price > 0) {
-                    $fee_id = 'personalised_ribbon_fee';
-                    $fee_name = $ribbon_text
-                        ? sprintf(__('Personalised ribbon: "%s"', 'piy-online-lite'), $ribbon_text)
-                        : __('Personalised ribbon', 'piy-online-lite');
+                $fee_id = 'personalised_ribbon_fee';
 
-                    $cart->add_fee($fee_name, $price, true, '');
-                    WC()->session->set('ribbon_fee_id', $fee_id);
+                if ($ribbon_text) {
+                    $fee_name = $price > 0
+                        ? sprintf(__('Personalised ribbon: "%s"', 'piy-online-lite'), $ribbon_text)
+                        : sprintf(__('Personalised ribbon: "%s" (free)', 'piy-online-lite'), $ribbon_text);
+                } else {
+                    $fee_name = $price > 0
+                        ? __('Personalised ribbon', 'piy-online-lite')
+                        : __('Personalised ribbon (free)', 'piy-online-lite');
                 }
+
+                // Додаємо плату навіть якщо вона 0, щоб показувалося "free"
+                $cart->add_fee($fee_name, $price, true, '');
+                WC()->session->set('ribbon_fee_id', $fee_id);
             }
         }
     }

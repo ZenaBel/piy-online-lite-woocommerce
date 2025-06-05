@@ -3,7 +3,7 @@
  * Plugin Name:       PIY Online Lite
  * Plugin URI:        https://piyribbons.com
  * Description:       PIY Online Lite is a WooCommerce plugin that allows you to add emojis and ribbons to your cart and checkout pages.
- * Version:           1.0.3
+ * Version:           1.0.4
  * Author:            Codi
  * Developed By:      Codi
  * Author URI:        https://piyribbons.com
